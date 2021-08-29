@@ -21,6 +21,12 @@ BUTTON_STYLE = {
 "font_color_press" : (77, 208, 225)
 }
 
+def initialize_ui(view):
+    for button in view.buttons:
+        button.set_style_attrs(**BUTTON_STYLE)
+        view.ui_manager.add_ui_element(button)
+
+
 def highlight_button(view, key):
     view.buttons[view.highlighted].hovered = False
     if key in (arcade.key.W, arcade.key.UP):

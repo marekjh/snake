@@ -71,10 +71,10 @@ class TitleView(arcade.View):
         self.ui_manager.purge_ui_elements()
         self.highlighted = -1
         self.buttons = [
-        Button("PLAY", SCREEN_LENGTH / 2, SCREEN_LENGTH / 3, name="play", view=self),
-        Button("OPTIONS", SCREEN_LENGTH / 2, SCREEN_LENGTH / 6, name="options", view=self),
+        Button("PLAY", SCREEN_LENGTH / 2, SCREEN_LENGTH / 3, view=self),
+        Button("OPTIONS", SCREEN_LENGTH / 2, SCREEN_LENGTH / 6, view=self),
         ]
-        self.initialize_ui()
+        helper.initialize_ui(self)
 
     def on_draw(self):
         arcade.start_render()
@@ -87,23 +87,23 @@ class TitleView(arcade.View):
         )
 
     def on_key_press(self, key, modifiers):
-        helper.highlight_button(self, key)
+        if key in (arcade.key.W, arcade.key.S, arcade.key.UP, arcade.key.DOWN):
+            helper.highlight_button(self, key)
+        elif key in (arcade.key.RETURN, arcade.key.SPACE):
+            self.switch_view()
         
-    def switch_view(self, button_label):
+    def switch_view(self):
         self.ui_manager.purge_ui_elements()
-        if button_label == "play":
+        if self.highlighted == 0:
             snake_view = SnakeView(self.properties)
             snake_view.setup()
             self.window.show_view(snake_view)
-        elif button_label == "options":
+        elif self.highlighted == 1:
             options_view = OptionsView(self.properties)
             options_view.setup()
             self.window.show_view(options_view)
 
-    def initialize_ui(self):
-        for button in self.buttons:
-            button.set_style_attrs(**helper.BUTTON_STYLE)
-            self.ui_manager.add_ui_element(button)
+    
 
 class OptionsView(arcade.View):
     def __init__(self, properties):
@@ -116,7 +116,7 @@ class OptionsView(arcade.View):
 
     def setup(self):
         self.ui_manager.purge_ui_elements()
-        test_button = Button("TESTING", SCREEN_LENGTH / 2, SCREEN_LENGTH / 2, name="test_button", view=self)
+        test_button = Button("TESTING", SCREEN_LENGTH / 2, SCREEN_LENGTH / 2, view=self)
         self.ui_manager.add_ui_element(test_button)
     
     def on_draw(self):
@@ -126,14 +126,13 @@ class OptionsView(arcade.View):
         helper.highlight_button(self, key)
     
 class Button(arcade.gui.UILabel):
-    def __init__(self, text, center_x, center_y, name, view):
+    def __init__(self, text, center_x, center_y, view):
         super().__init__(text, center_x, center_y)
-        self.name = name
         self.view = view
     
     def on_click(self):
         if str(self.view) == "TitleView":
-            self.view.switch_view(self.name)
+            self.view.switch_view()
         elif str(self.view) == "OptionsView":
             pass
     
