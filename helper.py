@@ -4,13 +4,18 @@ TITLE_SCREEN_BACKGROUND_COLOR = (33, 33, 33)
 
 DEFAULT_PROPERTIES = {
 "grid_length": 20,
-"color_scheme": "blue"
+"color_scheme": "blue",
+"snake_color": "green"
 }
 
-COLORS = {
+BOARD_COLORS = {
 "blue": (arcade.color.AZURE, arcade.color.BALL_BLUE),
 "brown": (arcade.color.LIGHT_BROWN, arcade.color.DARK_BROWN),
 "purple": (arcade.color.LIGHT_PASTEL_PURPLE, arcade.color.DARK_PASTEL_PURPLE),
+}
+
+SNAKE_COLORS = {
+    "green": arcade.color.PASTEL_GREEN
 }
 
 BUTTON_STYLE = {
