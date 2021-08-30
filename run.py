@@ -39,8 +39,7 @@ class SnakeView(arcade.View):
         self.timer = 0
         self.score = 0
         self.direction = "r"
-        self.tiles = self.initialize_grid()
-        self.border = self.initialize_border()
+        (self.tiles, self.border) = self.initialize_board()
         self.snake = self.initialize_snake()
         self.food = arcade.SpriteSolidColor(self.tile_length, self.tile_length, self.food_color)     
         self.move_food()
@@ -145,44 +144,31 @@ class SnakeView(arcade.View):
         squares.reverse()
         return squares
 
-    def initialize_grid(self):
+    def initialize_board(self):
         rows = []
+        border = arcade.SpriteList()
         offset = self.tile_length / 2
         shade = 0
-        for y in range(1, self.grid_length - 1):
+        for y in range(self.grid_length):
             tiles = arcade.SpriteList()
             for x in range(self.grid_length):
-                if x == 0 or x == self.grid_length - 1:
-                    continue
-                tile = arcade.SpriteSolidColor(self.tile_length, self.tile_length, self.color_scheme[shade])
+                if x == 0 or x == self.grid_length - 1 or y == 0 or y == self.grid_length - 1:
+                    tile = arcade.SpriteSolidColor(self.tile_length, self.tile_length, helper.TITLE_SCREEN_BACKGROUND_COLOR)
+                    sprite_list = border
+                else:
+                    tile = arcade.SpriteSolidColor(self.tile_length, self.tile_length, self.color_scheme[shade])
+                    sprite_list = tiles
                 tile.center_x = offset * (2 * x + 1)
                 tile.center_y = offset * (2 * y + 1)
-                tiles.append(tile)
+                sprite_list.append(tile)
                 shade = not shade
-            rows.append(tiles)
+            if len(tiles) > 0:
+                rows.append(tiles)
             if self.grid_length % 2 == 0:
                 shade = not shade 
         
-        return rows
+        return (rows, border)
 
-    def initialize_border(self):
-        def add_tile():
-            tile = arcade.SpriteSolidColor(self.tile_length, self.tile_length, helper.TITLE_SCREEN_BACKGROUND_COLOR)
-            tile.center_x = offset * (2 * x + 1)
-            tile.center_y = offset * (2 * y + 1)
-            border.append(tile)
-        
-        border = arcade.SpriteList()
-        offset = self.tile_length / 2
-        for x in range(self.grid_length):
-            for y in (0, self.grid_length - 1):
-                add_tile()
-        for y in range(1, self.grid_length - 1):
-            for x in (0, self.grid_length - 1):
-                add_tile()
-        
-        return border
-        
 class TitleView(arcade.View):
     def __init__(self):
         super().__init__()
@@ -248,6 +234,7 @@ class OptionsView(arcade.View):
     
     def on_draw(self):
         arcade.start_render()
+        arcade.draw_text("To Do", SCREEN_LENGTH / 3, SCREEN_LENGTH / 2, arcade.color.WHITE, font_size=28, align="center", font_name="pressstart2p")
     
     def on_key_press(self, key, modifiers):
         helper.highlight_button(self, key)
