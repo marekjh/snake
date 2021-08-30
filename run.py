@@ -92,18 +92,21 @@ class SnakeView(arcade.View):
     def elongate_snake(self):
         new_tail = arcade.SpriteSolidColor(self.tile_length, self.tile_length, self.snake_color)
         tail = self.snake[-1]
-        if self.direction == "u":
-            new_tail.center_x = tail.center_x
-            new_tail.center_y = tail.center_y - self.tile_length
-        elif self.direction == "l":
-            new_tail.center_x = tail.center_x + self.tile_length
-            new_tail.center_y = tail.center_y
-        elif self.direction == "d":
-            new_tail.center_x = tail.center_x
-            new_tail.center_y = tail.center_y + self.tile_length
-        else:
-            new_tail.center_x = tail.center_x - self.tile_length
-            new_tail.center_y = tail.center_y
+        adjacent = self.snake[-2]
+        if tail.center_x == adjacent.center_x:
+            if adjacent.center_y < tail.center_y:
+                new_tail.center_x = tail.center_x
+                new_tail.center_y = tail.center_y + self.tile_length
+            else:
+                new_tail.center_x = tail.center_x 
+                new_tail.center_y = tail.center_y - self.tile_length
+        else:  
+            if adjacent.center_x < tail.center_x:
+                new_tail.center_x = tail.center_x + self.tile_length
+                new_tail.center_y = tail.center_y
+            else:
+                new_tail.center_x = tail.center_x - self.tile_length
+                new_tail.center_y = tail.center_y
         self.snake.append(new_tail)
 
     def move_food(self):
@@ -162,11 +165,6 @@ class SnakeView(arcade.View):
         
         return border
         
-    
-
-    
-        
-
 class TitleView(arcade.View):
     def __init__(self):
         super().__init__()
