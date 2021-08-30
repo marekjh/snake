@@ -222,22 +222,23 @@ class TitleView(arcade.View):
 class OptionsView(arcade.View):
     def __init__(self, properties):
         super().__init__()
-        self.ui_manager = arcade.gui.UIManager()
         self.properties = properties
         
     def __str__(self):
         return "OptionsView"
 
     def setup(self):
-        self.ui_manager.purge_ui_elements()
-        
-    
+        pass
+
     def on_draw(self):
         arcade.start_render()
         arcade.draw_text("To Do", SCREEN_LENGTH / 3, SCREEN_LENGTH / 2, arcade.color.WHITE, font_size=28, align="center", font_name="pressstart2p")
     
     def on_key_press(self, key, modifiers):
-        helper.highlight_button(self, key)
+        if key == arcade.key.ESCAPE:
+            title_view = TitleView()
+            title_view.setup()
+            self.window.show_view(title_view)
     
 class Button(arcade.gui.UILabel):
     def __init__(self, text, center_x, center_y, view):
