@@ -37,7 +37,7 @@ SCORE_TEXT = {
     "color": (153, 153, 153),
     "font_size": 18,
     "align": "center",
-    "font_name": os.path.join("fonts", "pressstart2p")
+    "font_name": os.path.join("fonts", "pressstart2p.ttf")
 }
 
 def initialize_ui(view, elements, style):
