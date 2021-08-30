@@ -26,7 +26,7 @@ FOOD_COLORS = {
 }
 
 BUTTON_STYLE = {
-"font_name": os.path.join("fonts", "presstart2p.ttf"),
+"font_name": os.path.join("fonts", "pressstart2p.ttf"),
 "font_size" : 28,
 "font_color": (153, 153, 153),
 "font_color_hover": (77, 208, 225),
