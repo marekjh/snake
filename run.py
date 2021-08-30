@@ -27,14 +27,21 @@ class SnakeView(arcade.View):
         self.snake_color = helper.SNAKE_COLORS[properties["snake_color"]]
         self.food_color = helper.FOOD_COLORS[properties["food_color"]]
         self.v = properties["snake_speed"]
-        
+
+        with open("highscore.txt", "r") as f:
+            self.high_score = int(f.read())
+    
+    def __str__(self):
+        return "SnakeView"
+
     def setup(self):
         self.ui_manager.purge_ui_elements()
         self.timer = 0
+        self.score = 0
         self.direction = "r"
         self.tiles = self.initialize_grid()
         self.border = self.initialize_border()
-        self.snake = self.initialize_snake()  
+        self.snake = self.initialize_snake()
         self.food = arcade.SpriteSolidColor(self.tile_length, self.tile_length, self.food_color)     
         self.move_food()
     
@@ -45,7 +52,8 @@ class SnakeView(arcade.View):
         self.border.draw()
         self.snake.draw()
         self.food.draw()
-    
+        self.draw_score_text()
+         
     def on_update(self, delta_time):
         self.timer += delta_time
         if self.timer > self.v:
@@ -54,6 +62,11 @@ class SnakeView(arcade.View):
         if self.snake[0].collides_with_sprite(self.food):
             self.move_food()
             self.elongate_snake()
+            self.score += 1
+            if self.score > self.high_score:
+                self.high_score = self.score
+                with open("highscore.txt", "w") as f:
+                    f.write(str(self.high_score))
         if self.snake[0].collides_with_list(self.border) or self.snake[0].collides_with_list(self.snake):
             self.setup()
         
@@ -115,6 +128,10 @@ class SnakeView(arcade.View):
         j = random.randrange(len(self.tiles[i]))
         self.food.center_x = self.tiles[i][j].center_x
         self.food.center_y = self.tiles[i][j].center_y
+
+    def draw_score_text(self):
+        arcade.draw_text(str(self.score), SCREEN_LENGTH / 2, SCREEN_LENGTH - self.tile_length, **helper.SCORE_TEXT)
+        arcade.draw_text(f"HIGH SCORE {self.high_score}", SCREEN_LENGTH / 4, 0, **helper.SCORE_TEXT)
 
     def initialize_snake(self):
         squares = arcade.SpriteList()
@@ -183,7 +200,7 @@ class TitleView(arcade.View):
         Button("PLAY", SCREEN_LENGTH / 2, SCREEN_LENGTH / 3, view=self),
         Button("OPTIONS", SCREEN_LENGTH / 2, SCREEN_LENGTH / 6, view=self),
         ]
-        helper.initialize_ui(self)
+        helper.initialize_ui(self, self.buttons, helper.BUTTON_STYLE)
 
     def on_draw(self):
         arcade.start_render()
@@ -227,8 +244,7 @@ class OptionsView(arcade.View):
 
     def setup(self):
         self.ui_manager.purge_ui_elements()
-        test_button = Button("TESTING", SCREEN_LENGTH / 2, SCREEN_LENGTH / 2, view=self)
-        self.ui_manager.add_ui_element(test_button)
+        
     
     def on_draw(self):
         arcade.start_render()
@@ -246,6 +262,8 @@ class Button(arcade.gui.UILabel):
             self.view.switch_view()
         elif str(self.view) == "OptionsView":
             pass
+        elif str(self.view) == "SnakeView":
+            return
     
     def on_hover(self):
         self.view.highlighted = self.view.buttons.index(self)

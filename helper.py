@@ -23,6 +23,7 @@ SNAKE_COLORS = {
 FOOD_COLORS = {
     "red": arcade.color.PASTEL_RED
 }
+
 BUTTON_STYLE = {
 "font_name": "pressstart2p",
 "font_size" : 28,
@@ -31,10 +32,17 @@ BUTTON_STYLE = {
 "font_color_press" : (77, 208, 225)
 }
 
-def initialize_ui(view):
-    for button in view.buttons:
-        button.set_style_attrs(**BUTTON_STYLE)
-        view.ui_manager.add_ui_element(button)
+SCORE_TEXT = {
+    "color": (153, 153, 153),
+    "font_size": 18,
+    "align": "center",
+    "font_name": "pressstart2p"
+}
+
+def initialize_ui(view, elements, style):
+    for element in elements:
+        element.set_style_attrs(**style)
+        view.ui_manager.add_ui_element(element)
 
 
 def highlight_button(view, key):
