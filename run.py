@@ -1,6 +1,7 @@
 import arcade
 import arcade.gui
 import os
+import random
 import helper
 
 SCREEN_LENGTH = 600
@@ -28,6 +29,7 @@ class SnakeView(arcade.View):
     def setup(self):
         self.ui_manager.purge_ui_elements()
         self.timer = 0
+        self.direction = "r"
         self.tiles = self.initialize_grid()
         self.border = self.initialize_border()
         self.snake = self.initialize_snake()       
@@ -41,12 +43,46 @@ class SnakeView(arcade.View):
     
     def on_update(self, delta_time):
         self.timer += delta_time
-        if self.timer > 0.5:
+        if self.snake[0].collides_with_list(self.border) or self.snake[0].collides_with_list(self.snake):
+            self.setup()
+        if self.timer > 0.2:
             self.timer = 0
             self.move_snake()
     
-    def move_snake(self):
-        pass
+    def on_key_press(self, key, modifiers):
+        keys = arcade.key
+        if key in (keys.W, keys.UP):
+            if self.direction == "d":
+                return
+            self.direction = "u"
+        elif key in (keys.A, keys.LEFT):
+            if self.direction == "r":
+                return
+            self.direction = "l"
+        elif key in (keys.S, keys.DOWN):
+            if self.direction == "u":
+                return
+            self.direction = "d"
+        elif key in (keys.D, keys.RIGHT):
+            if self.direction == "l":
+                return
+            self.direction = "r"
+
+    def move_snake(self, key_pressed=False):
+        (head, neck) = (self.snake[0], self.snake[1])
+        for i in range(len(self.snake) - 1, 0, -1):
+            self.snake[i].center_x = self.snake[i - 1].center_x
+            self.snake[i].center_y = self.snake[i - 1].center_y
+        if self.direction == "l":
+            head.center_x -= self.tile_length
+        elif self.direction == "r":
+            head.center_x += self.tile_length
+        elif self.direction == "d":
+            head.center_y -= self.tile_length
+        else:
+            head.center_y += self.tile_length
+        
+        
 
     def initialize_snake(self):
         squares = arcade.SpriteList()
