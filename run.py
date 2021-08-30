@@ -25,6 +25,7 @@ class SnakeView(arcade.View):
         self.tile_length = SCREEN_LENGTH // self.grid_length
         self.color_scheme = helper.BOARD_COLORS[properties["color_scheme"]]
         self.snake_color = helper.SNAKE_COLORS[properties["snake_color"]]
+        self.food_color = helper.FOOD_COLORS[properties["food_color"]]
         
     def setup(self):
         self.ui_manager.purge_ui_elements()
@@ -32,23 +33,29 @@ class SnakeView(arcade.View):
         self.direction = "r"
         self.tiles = self.initialize_grid()
         self.border = self.initialize_border()
-        self.snake = self.initialize_snake()       
-
+        self.snake = self.initialize_snake()  
+        self.food = arcade.SpriteSolidColor(self.tile_length, self.tile_length, self.food_color)     
+        self.move_food()
+    
     def on_draw(self):
         arcade.start_render()
         for row in self.tiles:
             row.draw()
         self.border.draw()
         self.snake.draw()
+        self.food.draw()
     
     def on_update(self, delta_time):
         self.timer += delta_time
-        if self.snake[0].collides_with_list(self.border) or self.snake[0].collides_with_list(self.snake):
-            self.setup()
-        if self.timer > 0.2:
+        if self.timer > 0.11:
             self.timer = 0
             self.move_snake()
-    
+        if self.snake[0].collides_with_sprite(self.food):
+            self.move_food()
+            self.elongate_snake()
+        if self.snake[0].collides_with_list(self.border) or self.snake[0].collides_with_list(self.snake):
+            self.setup()
+        
     def on_key_press(self, key, modifiers):
         keys = arcade.key
         if key in (keys.W, keys.UP):
@@ -73,16 +80,37 @@ class SnakeView(arcade.View):
         for i in range(len(self.snake) - 1, 0, -1):
             self.snake[i].center_x = self.snake[i - 1].center_x
             self.snake[i].center_y = self.snake[i - 1].center_y
-        if self.direction == "l":
+        if self.direction == "u":
+            head.center_y += self.tile_length
+        elif self.direction == "l":
             head.center_x -= self.tile_length
-        elif self.direction == "r":
-            head.center_x += self.tile_length
         elif self.direction == "d":
             head.center_y -= self.tile_length
         else:
-            head.center_y += self.tile_length
-        
-        
+            head.center_x += self.tile_length
+
+    def elongate_snake(self):
+        new_tail = arcade.SpriteSolidColor(self.tile_length, self.tile_length, self.snake_color)
+        tail = self.snake[-1]
+        if self.direction == "u":
+            new_tail.center_x = tail.center_x
+            new_tail.center_y = tail.center_y - self.tile_length
+        elif self.direction == "l":
+            new_tail.center_x = tail.center_x + self.tile_length
+            new_tail.center_y = tail.center_y
+        elif self.direction == "d":
+            new_tail.center_x = tail.center_x
+            new_tail.center_y = tail.center_y + self.tile_length
+        else:
+            new_tail.center_x = tail.center_x - self.tile_length
+            new_tail.center_y = tail.center_y
+        self.snake.append(new_tail)
+
+    def move_food(self):
+        i = random.randrange(len(self.tiles))
+        j = random.randrange(len(self.tiles[i]))
+        self.food.center_x = self.tiles[i][j].center_x
+        self.food.center_y = self.tiles[i][j].center_y
 
     def initialize_snake(self):
         squares = arcade.SpriteList()
@@ -134,7 +162,10 @@ class SnakeView(arcade.View):
         
         return border
         
+    
 
+    
+        
 
 class TitleView(arcade.View):
     def __init__(self):

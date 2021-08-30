@@ -5,7 +5,8 @@ TITLE_SCREEN_BACKGROUND_COLOR = (33, 33, 33)
 DEFAULT_PROPERTIES = {
 "grid_length": 20,
 "color_scheme": "blue",
-"snake_color": "green"
+"snake_color": "green",
+"food_color": "red"
 }
 
 BOARD_COLORS = {
@@ -18,6 +19,9 @@ SNAKE_COLORS = {
     "green": arcade.color.PASTEL_GREEN
 }
 
+FOOD_COLORS = {
+    "red": arcade.color.PASTEL_RED
+}
 BUTTON_STYLE = {
 "font_name": "pressstart2p",
 "font_size" : 28,
