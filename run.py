@@ -27,15 +27,27 @@ class SnakeView(arcade.View):
         
     def setup(self):
         self.ui_manager.purge_ui_elements()
+        self.timer = 0
         self.tiles = self.initialize_grid()
-        self.snake = self.initialize_snake()
+        self.border = self.initialize_border()
+        self.snake = self.initialize_snake()       
 
     def on_draw(self):
         arcade.start_render()
         for row in self.tiles:
             row.draw()
+        self.border.draw()
         self.snake.draw()
     
+    def on_update(self, delta_time):
+        self.timer += delta_time
+        if self.timer > 0.5:
+            self.timer = 0
+            self.move_snake()
+    
+    def move_snake(self):
+        pass
+
     def initialize_snake(self):
         squares = arcade.SpriteList()
         center_row = len(self.tiles) // 2
@@ -45,20 +57,19 @@ class SnakeView(arcade.View):
             square.center_x = self.tiles[center_row][i].center_x
             square.center_y = self.tiles[center_row][i].center_y
             squares.append(square)
+        squares.reverse()
         return squares
 
     def initialize_grid(self):
         rows = []
-        offset = SCREEN_LENGTH / (2 * self.grid_length)
+        offset = self.tile_length / 2
         shade = 0
-        for y in range(self.grid_length):
+        for y in range(1, self.grid_length - 1):
             tiles = arcade.SpriteList()
             for x in range(self.grid_length):
-                if x == 0 or x == self.grid_length - 1 or y == 0 or y == self.grid_length - 1:
-                    tile_color = helper.TITLE_SCREEN_BACKGROUND_COLOR
-                else:
-                    tile_color = self.color_scheme[shade]
-                tile = arcade.SpriteSolidColor(self.tile_length, self.tile_length, tile_color)
+                if x == 0 or x == self.grid_length - 1:
+                    continue
+                tile = arcade.SpriteSolidColor(self.tile_length, self.tile_length, self.color_scheme[shade])
                 tile.center_x = offset * (2 * x + 1)
                 tile.center_y = offset * (2 * y + 1)
                 tiles.append(tile)
@@ -66,7 +77,28 @@ class SnakeView(arcade.View):
             rows.append(tiles)
             if self.grid_length % 2 == 0:
                 shade = not shade 
+        
         return rows
+
+    def initialize_border(self):
+        def add_tile():
+            tile = arcade.SpriteSolidColor(self.tile_length, self.tile_length, helper.TITLE_SCREEN_BACKGROUND_COLOR)
+            tile.center_x = offset * (2 * x + 1)
+            tile.center_y = offset * (2 * y + 1)
+            border.append(tile)
+        
+        border = arcade.SpriteList()
+        offset = self.tile_length / 2
+        for x in range(self.grid_length):
+            for y in (0, self.grid_length - 1):
+                add_tile()
+        for y in range(1, self.grid_length - 1):
+            for x in (0, self.grid_length - 1):
+                add_tile()
+        
+        return border
+        
+
 
 class TitleView(arcade.View):
     def __init__(self):
@@ -104,6 +136,9 @@ class TitleView(arcade.View):
             self.switch_view()
         
     def switch_view(self):
+        if self.highlighted == -1:
+            return
+
         self.ui_manager.purge_ui_elements()
         if self.highlighted == 0:
             snake_view = SnakeView(self.properties)
