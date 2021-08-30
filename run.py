@@ -26,6 +26,7 @@ class SnakeView(arcade.View):
         self.color_scheme = helper.BOARD_COLORS[properties["color_scheme"]]
         self.snake_color = helper.SNAKE_COLORS[properties["snake_color"]]
         self.food_color = helper.FOOD_COLORS[properties["food_color"]]
+        self.v = properties["snake_speed"]
         
     def setup(self):
         self.ui_manager.purge_ui_elements()
@@ -47,7 +48,7 @@ class SnakeView(arcade.View):
     
     def on_update(self, delta_time):
         self.timer += delta_time
-        if self.timer > 0.11:
+        if self.timer > self.v:
             self.timer = 0
             self.move_snake()
         if self.snake[0].collides_with_sprite(self.food):

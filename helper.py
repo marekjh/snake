@@ -6,7 +6,8 @@ DEFAULT_PROPERTIES = {
 "grid_length": 20,
 "color_scheme": "blue",
 "snake_color": "green",
-"food_color": "red"
+"food_color": "red",
+"snake_speed": 0.11
 }
 
 BOARD_COLORS = {
