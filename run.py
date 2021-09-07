@@ -88,7 +88,7 @@ class SnakeView(arcade.View):
                 return
             self.direction = "r"
 
-    def move_snake(self, key_pressed=False):
+    def move_snake(self):
         head = self.snake[0]
         for i in range(len(self.snake) - 1, 0, -1):
             self.snake[i].center_x = self.snake[i - 1].center_x
