@@ -232,7 +232,8 @@ class OptionsView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_text("To Do", SCREEN_LENGTH / 3, SCREEN_LENGTH / 2, arcade.color.WHITE, font_size=28, align="center", font_name="pressstart2p")
+        arcade.draw_text("To Do", SCREEN_LENGTH / 3, SCREEN_LENGTH / 2, arcade.color.WHITE, 
+                         font_size=28, align="center", font_name=os.path.join("fonts", "pressstart2p.ttf"))
     
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ESCAPE:
@@ -246,11 +247,11 @@ class Button(arcade.gui.UILabel):
         self.view = view
     
     def on_click(self):
-        if str(self.view) == "TitleView":
+        if type(self.view) == TitleView:
             self.view.switch_view()
-        elif str(self.view) == "OptionsView":
+        elif type(self.view) == OptionsView:
             pass
-        elif str(self.view) == "SnakeView":
+        elif type(self.view) == SnakeView:
             return
     
     def on_hover(self):
